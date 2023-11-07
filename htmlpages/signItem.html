@@ -7,12 +7,13 @@
                     class="layui-input">
             </div>
         </div>
+
         <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">订单号码</label>
                 <div class="layui-input-inline layui-input-wrap">
-                    <input type="tel" id="code_result" name="phone" lay-verify="required|phone" autocomplete="off"
-                        lay-reqtext="请填写订单号" lay-affix="clear" class="layui-input demo-phone">
+                    <input type="tel" id="code_result" name="phone" lay-verify="required|" autocomplete="off"
+                        lay-reqtext="请填写订单号" lay-affix="clear" class="layui-input">
                     <div class="layui-input-affix layui-input-suffix layui-hide"><i
                             class="layui-icon layui-icon-clear"></i></div>
                 </div>
@@ -22,6 +23,7 @@
                 </div>
             </div>
         </div>
+
         <div class="layui-form-item">
             <label class="layui-form-label">订单数量</label>
             <div class="layui-input-inline layui-input-wrap">
@@ -33,7 +35,7 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">预期发货日期</label>
+            <label class="layui-form-label">发货日期</label>
             <div class="layui-input-inline layui-input-wrap">
                 <div class="layui-input-prefix">
                     <i class="layui-icon layui-icon-date"></i>
@@ -62,20 +64,16 @@
                         </optgroup>
                     </select>
                     <div class="layui-unselect layui-form-select">
-                        <div class="layui-select-title"><input type="text" placeholder="请选择问题" value="" readonly=""
+                        <div class="layui-select-title"><input type="text" placeholder="请选择摆放位置" value="" readonly=""
                                 class="layui-input layui-unselect"><i class="layui-edge"></i></div>
                         <dl class="layui-anim layui-anim-upbit layui-select-group">
-                            <dd lay-value="" class="layui-select-tips layui-this">请选择问题</dd>
-                            <dt>城市记忆</dt>
-                            <dd lay-value="你工作的第一个城市" class="">你工作的第一个城市</dd>
-                            <dt>学生时代</dt>
-                            <dd lay-value="你的工号" class="">你的工号</dd>
-                            <dd lay-value="你最喜欢的老师" class="">你最喜欢的老师</dd>
+                            <dd lay-value="" class="layui-select-tips layui-this">请选择摆放位置</dd>
+                            <dt>货架</dt>
+                            <dt>地面</dt>
                         </dl>
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="layui-form-item">
@@ -83,15 +81,15 @@
             <div class="layui-input-block">
                 <input type="checkbox" name="arr[0]" title="遗失订单">
                 <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
-                    <div>选项1</div><i class="layui-icon layui-icon-ok"></i>
+                    <div>遗失订单</div><i class="layui-icon layui-icon-ok"></i>
                 </div>
                 <input type="checkbox" name="arr[1]" title="地址错误" checked="">
                 <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                    <div>选项2</div><i class="layui-icon layui-icon-ok"></i>
+                    <div>地址错误</div><i class="layui-icon layui-icon-ok"></i>
                 </div>
                 <input type="checkbox" name="arr[2]" title="买家失踪">
                 <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
-                    <div>选项3</div><i class="layui-icon layui-icon-ok"></i>
+                    <div>买家失踪</div><i class="layui-icon layui-icon-ok"></i>
                 </div>
             </div>
         </div>
@@ -103,11 +101,11 @@
                 <input type="radio" name="devi" value="是" title="是" checked="">
                 <div class="layui-unselect layui-form-radio layui-form-radioed"><i
                         class="layui-anim layui-icon layui-icon-radio"></i>
-                    <div>男</div>
+                    <div>是</div>
                 </div>
                 <input type="radio" name="sex" value="否" title="否">
                 <div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon layui-icon-circle"></i>
-                    <div>女</div>
+                    <div>否</div>
                 </div>
                 <input type="radio" name="sex" value="禁" title="禁用" disabled="">
                 <div class="layui-unselect layui-form-radio layui-radio-disabled layui-disabled"><i
@@ -129,22 +127,15 @@
             </div>
         </div>
     </form>
-
+    <script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>
     <script>
+        // window.onload = function(){}
         layui.use(['form', 'laydate', 'util'], function () {
             var form = layui.form;
             var layer = layui.layer;
             var laydate = layui.laydate;
             var util = layui.util;
 
-            // 自定义验证规则
-            form.verify({
-                pass: function (value) {
-                    if (!/(.+){6,12}$/.test(value)) {
-                        return '密码必须 6 到 12 位';
-                    }
-                }
-            });
 
             // 指定开关事件
             form.on('switch(switchTest)', function (data) {
@@ -172,6 +163,7 @@
             });
 
         });
+        // 扫码
         $('#btn_submit').click(function () { socket.send('scand') });
     </script>
 
