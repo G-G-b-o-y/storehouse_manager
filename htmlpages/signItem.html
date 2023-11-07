@@ -1,0 +1,178 @@
+<div>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">买家昵称</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入物品名称" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">订单号码</label>
+                <div class="layui-input-inline layui-input-wrap">
+                    <input type="tel" id="code_result" name="phone" lay-verify="required|phone" autocomplete="off"
+                        lay-reqtext="请填写订单号" lay-affix="clear" class="layui-input demo-phone">
+                    <div class="layui-input-affix layui-input-suffix layui-hide"><i
+                            class="layui-icon layui-icon-clear"></i></div>
+                </div>
+                <div class="layui-form-mid" style="padding: 0!important;">
+                    <button type="button" id="btn_submit" class="layui-btn layui-btn-primary"
+                        lay-on="get-vercode">扫码获取</button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">订单数量</label>
+            <div class="layui-input-inline layui-input-wrap">
+                <input type="text" name="vercode" lay-verify="required" autocomplete="off" lay-affix="clear"
+                    class="layui-input">
+                <div class="layui-input-affix layui-input-suffix layui-hide"><i class="layui-icon layui-icon-clear"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">预期发货日期</label>
+            <div class="layui-input-inline layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-date"></i>
+                </div>
+                <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">货架号码</label>
+                <div class="layui-input-inline">
+                    <select name="quiz">
+                        <option value="">请选择摆放位置</option>
+                        <optgroup label="货架">
+                            <option value="s1">第一层</option>
+                            <option value="s2">第二层</option>
+                            <option value="s3">第三层</option>
+                            <option value="s4">第四层</option>
+                        </optgroup>
+                        <optgroup label="地面">
+                            <option value="gb">大盒子</option>
+                            <option value="gs">单个</option>
+                        </optgroup>
+                    </select>
+                    <div class="layui-unselect layui-form-select">
+                        <div class="layui-select-title"><input type="text" placeholder="请选择问题" value="" readonly=""
+                                class="layui-input layui-unselect"><i class="layui-edge"></i></div>
+                        <dl class="layui-anim layui-anim-upbit layui-select-group">
+                            <dd lay-value="" class="layui-select-tips layui-this">请选择问题</dd>
+                            <dt>城市记忆</dt>
+                            <dd lay-value="你工作的第一个城市" class="">你工作的第一个城市</dd>
+                            <dt>学生时代</dt>
+                            <dd lay-value="你的工号" class="">你的工号</dd>
+                            <dd lay-value="你最喜欢的老师" class="">你最喜欢的老师</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">异常订单</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="arr[0]" title="遗失订单">
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+                    <div>选项1</div><i class="layui-icon layui-icon-ok"></i>
+                </div>
+                <input type="checkbox" name="arr[1]" title="地址错误" checked="">
+                <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
+                    <div>选项2</div><i class="layui-icon layui-icon-ok"></i>
+                </div>
+                <input type="checkbox" name="arr[2]" title="买家失踪">
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+                    <div>选项3</div><i class="layui-icon layui-icon-ok"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">延迟发货</label>
+            <div class="layui-input-block">
+                <input type="radio" name="devi" value="是" title="是" checked="">
+                <div class="layui-unselect layui-form-radio layui-form-radioed"><i
+                        class="layui-anim layui-icon layui-icon-radio"></i>
+                    <div>男</div>
+                </div>
+                <input type="radio" name="sex" value="否" title="否">
+                <div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon layui-icon-circle"></i>
+                    <div>女</div>
+                </div>
+                <input type="radio" name="sex" value="禁" title="禁用" disabled="">
+                <div class="layui-unselect layui-form-radio layui-radio-disabled layui-disabled"><i
+                        class="layui-anim layui-icon layui-icon-circle"></i>
+                    <div>禁用</div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        layui.use(['form', 'laydate', 'util'], function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var laydate = layui.laydate;
+            var util = layui.util;
+
+            // 自定义验证规则
+            form.verify({
+                pass: function (value) {
+                    if (!/(.+){6,12}$/.test(value)) {
+                        return '密码必须 6 到 12 位';
+                    }
+                }
+            });
+
+            // 指定开关事件
+            form.on('switch(switchTest)', function (data) {
+                layer.msg('开关 checked：' + (this.checked ? 'true' : 'false'), {
+                    offset: '6px'
+                });
+                layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是 ON|OFF', data.othis)
+            });
+
+            // 提交事件
+            form.on('submit(demo1)', function (data) {
+                var field = data.field; // 获取表单字段值
+                // 显示填写结果，仅作演示用
+                layer.alert(JSON.stringify(field), {
+                    title: '当前填写的字段值'
+                });
+                // 此处可执行 Ajax 等操作
+                // …
+                return false; // 阻止默认 form 跳转
+            });
+
+            // 日期
+            laydate.render({
+                elem: '#date'
+            });
+
+        });
+        $('#btn_submit').click(function () { socket.send('scand') });
+    </script>
+
+</div>

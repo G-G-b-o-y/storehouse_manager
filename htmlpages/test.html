@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <!-- 引入 layui.css -->
+    <link href="//unpkg.com/layui@2.8.18/dist/css/layui.css" rel="stylesheet">
+    <title>仓库管理</title>
+</head>
+
+<body onload="WebSocket_connect()">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">仓库管理</div>
+            <!-- 头部区域（可配合layui 已有的水平导航） -->
+            <ul class="layui-nav layui-layout-left">
+                <!-- 移动端显示 -->
+                <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
+                    <i class="layui-icon layui-icon-spread-left"></i>
+                </li>
+                <li class="layui-nav-item layui-hide-xs"><a href="javascript:;">nav 1</a></li>
+                <li class="layui-nav-item layui-hide-xs"><a href="javascript:;">nav 2</a></li>
+                <li class="layui-nav-item layui-hide-xs"><a href="javascript:;">nav 3</a></li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">nav groups</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">menu 11</a></dd>
+                        <dd><a href="javascript:;">menu 22</a></dd>
+                        <dd><a href="javascript:;">menu 33</a></dd>
+                    </dl>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item layui-hide layui-show-sm-inline-block">
+                    <a href="javascript:;">
+                        <img src="//unpkg.com/outeres@0.0.10/img/layui/icon-v2.png" class="layui-nav-img">
+                        tester
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">Your Profile</a></dd>
+                        <dd><a href="javascript:;">Settings</a></dd>
+                        <dd><a href="javascript:;">Sign out</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-more-vertical"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="javascript:;">物品管理</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:socket.send('1002');">批量入库</a></dd>
+                            <dd><a href="javascript:socket.send('1003');">批量出库</a></dd>
+                            <dd><a href="javascript:socket.send('1004');">物件编辑</a></dd>
+                            <dd><a href="javascript:socket.send('1005');">报表</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">物品分类</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">list 1</a></dd>
+                            <dd><a href="javascript:;">list 2</a></dd>
+                            <dd><a href="javascript:;">超链接</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item"><a href="javascript:;">其它</a></li>
+                    <li class="layui-nav-item"><a href="javascript:;">设置</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="layui-body" id="main-body">
+            <div>
+                <form class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">买家昵称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="username" lay-verify="required" placeholder="请输入物品名称" autocomplete="off"
+                                class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单号码</label>
+                            <div class="layui-input-inline layui-input-wrap">
+                                <input type="tel" id="code_result" name="phone" lay-verify="required|phone" autocomplete="off"
+                                    lay-reqtext="请填写订单号" lay-affix="clear" class="layui-input demo-phone">
+                                <div class="layui-input-affix layui-input-suffix layui-hide"><i
+                                        class="layui-icon layui-icon-clear"></i></div>
+                            </div>
+                            <div class="layui-form-mid" style="padding: 0!important;">
+                                <button type="button" id="btn_submit" class="layui-btn layui-btn-primary"
+                                    lay-on="get-vercode">扫码获取</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">订单数量</label>
+                        <div class="layui-input-inline layui-input-wrap">
+                            <input type="text" name="vercode" lay-verify="required" autocomplete="off" lay-affix="clear"
+                                class="layui-input">
+                            <div class="layui-input-affix layui-input-suffix layui-hide"><i class="layui-icon layui-icon-clear"></i>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">预期发货日期</label>
+                        <div class="layui-input-inline layui-input-wrap">
+                            <div class="layui-input-prefix">
+                                <i class="layui-icon layui-icon-date"></i>
+                            </div>
+                            <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off"
+                                class="layui-input">
+                        </div>
+                    </div>
+            
+            
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">货架号码</label>
+                            <div class="layui-input-inline">
+                                <select name="quiz">
+                                    <option value="">请选择摆放位置</option>
+                                    <optgroup label="货架">
+                                        <option value="s1">第一层</option>
+                                        <option value="s2">第二层</option>
+                                        <option value="s3">第三层</option>
+                                        <option value="s4">第四层</option>
+                                    </optgroup>
+                                    <optgroup label="地面">
+                                        <option value="gb">大盒子</option>
+                                        <option value="gs">单个</option>
+                                    </optgroup>
+                                </select>
+                                <div class="layui-unselect layui-form-select">
+                                    <div class="layui-select-title"><input type="text" placeholder="请选择问题" value="" readonly=""
+                                            class="layui-input layui-unselect"><i class="layui-edge"></i></div>
+                                    <dl class="layui-anim layui-anim-upbit layui-select-group" style="">
+                                        <dd lay-value="" class="layui-select-tips layui-this">请选择问题</dd>
+                                        <dt>城市记忆</dt>
+                                        <dd lay-value="你工作的第一个城市" class="">你工作的第一个城市</dd>
+                                        <dt>学生时代</dt>
+                                        <dd lay-value="你的工号" class="">你的工号</dd>
+                                        <dd lay-value="你最喜欢的老师" class="">你最喜欢的老师</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+            
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">收货位置</label>
+                        <div class="layui-input-inline">
+                            <select name="quiz1">
+                                <option value="">请选择省</option>
+                                <option value="浙江" selected="">浙江省</option>
+                                <option value="江西">江西省</option>
+                                <option value="福建">福建省</option>
+                            </select>
+                            <div class="layui-unselect layui-form-select">
+                                <div class="layui-select-title"><input type="text" placeholder="请选择省" value="浙江省" readonly=""
+                                        class="layui-input layui-unselect"><i class="layui-edge"></i></div>
+                                <dl class="layui-anim layui-anim-upbit" style="">
+                                    <dd lay-value="" class="layui-select-tips">请选择省</dd>
+                                    <dd lay-value="浙江" class="layui-this">浙江省</dd>
+                                    <dd lay-value="福建" class="">福建省</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="quiz2">
+                                <option value="">请选择市</option>
+                                <option value="杭州">杭州</option>
+                                <option value="宁波" disabled="">宁波</option>
+                                <option value="温州">温州</option>
+                                <option value="温州">台州</option>
+                                <option value="温州">绍兴</option>
+                            </select>
+                            <div class="layui-unselect layui-form-select">
+                                <div class="layui-select-title"><input type="text" placeholder="请选择市" value="" readonly=""
+                                        class="layui-input layui-unselect"><i class="layui-edge"></i></div>
+                                <dl class="layui-anim layui-anim-upbit" style="">
+                                    <dd lay-value="" class="layui-select-tips layui-this">请选择市</dd>
+                                    <dd lay-value="杭州" class="">杭州</dd>
+                                    <dd lay-value="宁波" class="layui-disabled">宁波</dd>
+                                    <dd lay-value="温州" class="">温州</dd>
+                                    <dd lay-value="温州" class="">台州</dd>
+                                    <dd lay-value="温州" class="">绍兴</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="quiz3">
+                                <option value="">请选择县/区</option>
+                                <option value="西湖区">西湖区</option>
+                                <option value="余杭区">余杭区</option>
+                                <option value="拱墅区">临安市</option>
+                            </select>
+                            <div class="layui-unselect layui-form-select">
+                                <div class="layui-select-title"><input type="text" placeholder="请选择县/区" value="" readonly=""
+                                        class="layui-input layui-unselect"><i class="layui-edge"></i></div>
+                                <dl class="layui-anim layui-anim-upbit">
+                                    <dd lay-value="" class="layui-select-tips">请选择县/区</dd>
+                                    <dd lay-value="西湖区" class="">西湖区</dd>
+                                    <dd lay-value="余杭区" class="">余杭区</dd>
+                                    <dd lay-value="拱墅区" class="">临安市</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="layui-form-mid layui-text-em">
+                            <i class="layui-icon layui-icon-tips" lay-tips="{
+                    content: '此处只是演示联动排版，并未做联动交互',
+                    margin: '0 0 0 -10px'
+                  }"></i>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">异常订单</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" name="arr[0]" title="遗失订单">
+                            <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+                                <div>选项1</div><i class="layui-icon layui-icon-ok"></i>
+                            </div>
+                            <input type="checkbox" name="arr[1]" title="地址错误" checked="">
+                            <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
+                                <div>选项2</div><i class="layui-icon layui-icon-ok"></i>
+                            </div>
+                            <input type="checkbox" name="arr[2]" title="买家失踪">
+                            <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+                                <div>选项3</div><i class="layui-icon layui-icon-ok"></i>
+                            </div>
+                        </div>
+                    </div>
+            
+            
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">延迟发货</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="devi" value="是" title="是" checked="">
+                            <div class="layui-unselect layui-form-radio layui-form-radioed"><i
+                                    class="layui-anim layui-icon layui-icon-radio"></i>
+                                <div>男</div>
+                            </div>
+                            <input type="radio" name="sex" value="否" title="否">
+                            <div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon layui-icon-circle"></i>
+                                <div>女</div>
+                            </div>
+                            <input type="radio" name="sex" value="禁" title="禁用" disabled="">
+                            <div class="layui-unselect layui-form-radio layui-radio-disabled layui-disabled"><i
+                                    class="layui-anim layui-icon layui-icon-circle"></i>
+                                <div>禁用</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            
+                <script>
+                    layui.use(['form', 'laydate', 'util'], function () {
+                        var form = layui.form;
+                        var layer = layui.layer;
+                        var laydate = layui.laydate;
+                        var util = layui.util;
+            
+                        // 自定义验证规则
+                        form.verify({
+                            pass: function (value) {
+                                if (!/(.+){6,12}$/.test(value)) {
+                                    return '密码必须 6 到 12 位';
+                                }
+                            }
+                        });
+            
+                        // 指定开关事件
+                        form.on('switch(switchTest)', function (data) {
+                            layer.msg('开关 checked：' + (this.checked ? 'true' : 'false'), {
+                                offset: '6px'
+                            });
+                            layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是 ON|OFF', data.othis)
+                        });
+            
+                        // 提交事件
+                        form.on('submit(demo1)', function (data) {
+                            var field = data.field; // 获取表单字段值
+                            // 显示填写结果，仅作演示用
+                            layer.alert(JSON.stringify(field), {
+                                title: '当前填写的字段值'
+                            });
+                            // 此处可执行 Ajax 等操作
+                            // …
+                            return false; // 阻止默认 form 跳转
+                        });
+            
+                        // 日期
+                        laydate.render({
+                            elem: '#date'
+                        });
+            
+                    });
+                    $('#btn_submit').click(function () { socket.send('scand') });
+                </script>
+            
+            </div>
+            
+        </div>
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            底部固定区域
+        </div>
+    </div>
+
+    <script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>
+    <script>
+        //JS 
+        layui.use(['element', 'layer', 'util'], function () {
+            var element = layui.element;
+            var layer = layui.layer;
+            var util = layui.util;
+            var $ = layui.$;
+
+            //头部事件
+            util.event('lay-header-event', {
+                menuLeft: function (othis) { // 左侧菜单事件
+                    layer.msg('展开左侧菜单的操作', { icon: 0 });
+                },
+                menuRight: function () {  // 右侧菜单事件
+                    layer.open({
+                        type: 1,
+                        title: '更多',
+                        content: '<div style="padding: 15px;">处理右侧面板的操作</div>',
+                        area: ['260px', '100%'],
+                        offset: 'rt', // 右上角
+                        anim: 'slideLeft', // 从右侧抽屉滑出
+                        shadeClose: true,
+                        scrollbar: false
+                    });
+                }
+            });
+        });
+
+        function WebSocket_connect() {
+            // 创建 WebSocket 连接
+            socket = new WebSocket('ws://localhost:8000/ws');
+
+            // 连接建立时触发的事件处理程序
+            socket.onopen = function () {
+                console.log('已连接到服务器');
+                
+            };
+
+            // 接收到消息时触发的事件处理程序
+            socket.onmessage = function (event) {
+                // console.log('收到消息:', event.data);
+                let jsonObject = JSON.parse(event.data);
+                if (jsonObject['code'] == "200") {
+                    $('#code_result').val(jsonObject['msg']);
+                    $('#btn_submit').removeClass('layui-btn-disabled').attr("disabled",false);
+
+                } else if(jsonObject['code'] == "203") {
+                    layer.msg(jsonObject['msg'], { icon: 6 });
+                    $('#btn_submit').addClass("layui-btn-disabled").attr("disabled",true);
+                } else {
+                    {$('#main-body').html(jsonObject['html'])}
+                };
+                
+            };
+
+            // 连接关闭时触发的事件处理程序
+            socket.onclose = function () {
+                layer.msg('已断开与服务器的连接', { icon: 2 });
+            };
+
+            // 发生错误时触发的事件处理程序
+            socket.onerror = function (error) {
+                layer.msg('发生错误:', { icon: 5 });
+            };
+        }
+    </script>
+</body>
+
+</html>

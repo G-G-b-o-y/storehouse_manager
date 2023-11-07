@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+        integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <!-- 引入 layui.css -->
+    <link href="//unpkg.com/layui@2.8.18/dist/css/layui.css" rel="stylesheet">
+    <title>仓库管理</title>
+</head>
+
+<body onload="WebSocket_connect()">
+    <button type="button" id="btn_submit" class="layui-btn">扫描</button>
+    <input type="tel" id="code_result" name="orderID" lay-verify="required|orderID autocomplete="off lay-reqtext="订单号码" lay-affix="clear" class="layui-input">
+    <!-- 引入 layui.js -->
+    <script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>
+    <script>
+        // Usage
+        layui.use(function () {
+            var layer = layui.layer;
+            // Welcome
+            layer.msg('Hello World', { icon: 6});
+        });
+
+        function WebSocket_connect() {
+            // 创建 WebSocket 连接
+            const socket = new WebSocket('ws://localhost:8000/ws');
+
+            // 连接建立时触发的事件处理程序
+            socket.onopen = function () {
+                console.log('已连接到服务器');
+
+                $('#btn_submit').click(function () {socket.send('scand') });
+            };
+
+            // 接收到消息时触发的事件处理程序
+            socket.onmessage = function (event) {
+                console.log('收到消息:', event.data);
+                let jsonObject = JSON.parse(event.data);
+                if (jsonObject['code'] == "200") {
+                    $('#code_result').val(jsonObject['msg']);
+                    $('#btn_submit').removeClass('layui-btn-disabled').attr("disabled",false);
+
+                } else if(jsonObject['code'] == "203") {
+                    layer.msg(jsonObject['msg'], { icon: 6 });
+                    $('#btn_submit').addClass("layui-btn-disabled").attr("disabled",true);
+                };
+            };
+
+            // 连接关闭时触发的事件处理程序
+            socket.onclose = function () {
+                layer.msg('已断开与服务器的连接', { icon: 2 });
+                $('#btn_submit').removeClass('layui-btn-disabled').attr("disabled",false);
+            };
+
+            // 发生错误时触发的事件处理程序
+            socket.onerror = function (error) {
+                layer.msg('发生错误:', { icon: 5 });
+                $('#btn_submit').removeClass('layui-btn-disabled').attr("disabled",false);
+            };
+        }
+    </script>
+</body>
+
+</html>
