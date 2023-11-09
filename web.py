@@ -7,7 +7,7 @@ import uvicorn
 from modules.camera import usecamera
 
 html_raw = []
-page_list = ["model.html", "signItem.html"]
+page_list = ["model.html", "signItem.html", "itemInto.html", "outItem.html", "reportTable.html"]
 for fileName in page_list:
     with open(f'htmlpages/{fileName}', 'r', encoding='utf-8') as f:
         data = f.read()   #读取文本
@@ -30,8 +30,14 @@ async def websocket_route(websocket: WebSocket):
     # 需要异步的连接，否则会造成阻塞
     while True:
         data = await websocket.receive_text()
-        if data == "1004":
+        if data == "物件編輯":
             await websocket.send_json({"html" : html_raw[1], "code" : data})
+        if data == "批量入庫":
+            await websocket.send_json({"html" : html_raw[2], "code" : data})
+        if data == "批量出庫":
+            await websocket.send_json({"html" : html_raw[3], "code" : data})
+        if data == "報表":
+            await websocket.send_json({"html" : html_raw[4], "code" : data})
         if data == "scand": 
             await websocket.send_json({"msg" : "please show qrcode", "code" : "203"})  # 提示窗口
             codeData = usecamera()
