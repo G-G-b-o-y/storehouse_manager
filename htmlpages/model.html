@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <!-- 引入 layui.css -->
     <link href="//unpkg.com/layui@2.8.18/dist/css/layui.css" rel="stylesheet">
     <title>仓库管理</title>
@@ -58,10 +59,10 @@
                     <li class="layui-nav-item layui-nav-itemed">
                         <a class="" href="javascript:;">物品管理</a>
                         <dl class="layui-nav-child">
-                            <dd><a href="javascript:socket.send('1002');">批量入库</a></dd>
-                            <dd><a href="javascript:socket.send('1003');">批量出库</a></dd>
-                            <dd><a href="javascript:socket.send('1004');">物件编辑</a></dd>
-                            <dd><a href="javascript:socket.send('1005');">报表</a></dd>
+                            <dd><a href="itemInto">批量入库</a></dd>
+                            <dd><a href="outItem">批量出库</a></dd>
+                            <dd><a href="signItem">物件编辑</a></dd>
+                            <dd><a href="reportTable">报表</a></dd>
                         </dl>
                     </li>
                     <li class="layui-nav-item">
@@ -79,7 +80,7 @@
         </div>
         <div class="layui-body" id="main-body">
             <!-- 内容主体区域 -->
-            
+
         </div>
         <div class="layui-footer">
             <!-- 底部固定区域 -->
@@ -116,6 +117,13 @@
             });
         });
 
+        function pageGet(page) {
+            $.get(page, {opened:true}, function (data) {
+                // $('#main-body').html(data)
+                alert("数据:"+data)
+            });
+        };
+
         function WebSocket_connect() {
             // 创建 WebSocket 连接
             socket = new WebSocket('ws://localhost:8000/ws');
@@ -123,7 +131,7 @@
             // 连接建立时触发的事件处理程序
             socket.onopen = function () {
                 console.log('已连接到服务器');
-                
+
             };
 
             // 接收到消息时触发的事件处理程序
@@ -132,15 +140,12 @@
                 let jsonObject = JSON.parse(event.data);
                 if (jsonObject['code'] == "200") {
                     $('#code_result').val(jsonObject['msg']);
-                    $('#btn_submit').removeClass('layui-btn-disabled').attr("disabled",false);
+                    $('#btn_submit').removeClass('layui-btn-disabled').attr("disabled", false);
 
-                } else if(jsonObject['code'] == "203") {
+                } else if (jsonObject['code'] == "203") {
                     layer.msg(jsonObject['msg'], { icon: 6 });
-                    $('#btn_submit').addClass("layui-btn-disabled").attr("disabled",true);
-                } else {
-                    {$('#main-body').html(jsonObject['html'])}
+                    $('#btn_submit').addClass("layui-btn-disabled").attr("disabled", true);
                 };
-                
             };
 
             // 连接关闭时触发的事件处理程序
